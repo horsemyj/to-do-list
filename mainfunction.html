@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>To-Do List with Local Storage</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 50px auto;
+      max-width: 400px;
+      background: #f7f7f7;
+      color: #333;
+    }
+    h2 {
+      text-align: center;
+    }
+    #todo-form {
+      display: flex;
+      margin-bottom: 20px;
+    }
+    #todo-input {
+      flex: 1;
+      padding: 8px;
+      font-size: 1em;
+    }
+    #add-btn {
+      padding: 8px 14px;
+      font-size: 1em;
+      margin-left: 10px;
+      background: #09c;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    ul {
+      padding: 0;
+      list-style: none;
+    }
+    li {
+      background: white;
+      margin-bottom: 8px;
+      padding: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 4px;
+      box-shadow: 0 1px 2px #eee;
+    }
+    .delete-btn {
+      padding: 3px 8px;
+      background: #e33;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h2>To-Do List</h2>
+  <form id="todo-form">
+    <input id="todo-input" type="text" placeholder="Enter new task" required>
+    <button id="add-btn" type="submit">Add</button>
+  </form>
+  <ul id="todo-list"></ul>
+
+  <script>
+    // Get elements
+    const form = document.getElementById('todo-form');
+    const input = document.getElementById('todo-input');
+    const list = document.getElementById('todo-list');
+
+    // Load tasks from local storage or initialize empty
+    let todos = JSON.parse(localStorage.getItem('todos')) || [];
+
+    // Render tasks
+    function renderTodos() {
+      list.innerHTML = '';
+      todos.forEach((todo, idx) => {
+        const li = document.createElement('li');
+        li.textContent = todo;
+        const del = document.createElement('button');
+        del.textContent = 'Delete';
+        del.className = 'delete-btn';
+        del.onclick = function () {
+          todos.splice(idx, 1);
+          saveTodos();
+        };
+        li.appendChild(del);
+        list.appendChild(li);
+      });
+    }
+
+    // Save tasks to local storage and re-render
+    function saveTodos() {
+      localStorage.setItem('todos', JSON.stringify(todos));
+      renderTodos();
+    }
+
+    // Add new task
+    form.onsubmit = function (e) {
+      e.preventDefault();
+      const val = input.value.trim();
+      if (val) {
+        todos.push(val);
+        saveTodos();
+        input.value = '';
+      }
+    };
+
+    // Initial render
+    renderTodos();
+  </script>
+</body>
+</html>
